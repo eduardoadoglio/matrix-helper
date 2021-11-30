@@ -105,8 +105,9 @@ class Matriz {
     //
 
     private void combinaLinhas(int i1, int i2, double k){
-
-        // TODO: implementar este metodo.
+        for (int i = 0; i < this.m[i1].length; i++) {
+            this.m[i1][i] += this.m[i2][i] * k;
+        }
     }
 
     // metodo que procura, a partir da linha ini, a linha com uma entrada nao nula que
