@@ -34,7 +34,6 @@ class Matriz {
     }
 
     public void set(int i, int j, double valor){
-
         m[i][j] = valor;
     }
 
@@ -106,7 +105,7 @@ class Matriz {
 
     private void combinaLinhas(int i1, int i2, double k){
         for (int i = 0; i < this.m[i1].length; i++) {
-            this.m[i1][i] += this.m[i2][i] * k;
+            this.m[i1][i] += (this.m[i2][i] * k);
         }
     }
 
@@ -146,10 +145,44 @@ class Matriz {
     // que a matriz que invoca este metodo eh uma matriz quadrada.
 
     public double formaEscalonada(Matriz agregada){
+        if(agregada == null){
+            agregada = Matriz.identidade(this.lin);
+        }
+        int N = agregada.lin;
 
-        // TODO: implementar este metodo.
+        for (int k = 0; k < N; k++) {
+            int[] pivotInfo = encontraLinhaPivo(k);
 
+            trocaLinha(k, pivotInfo[0]);
+            agregada.trocaLinha(k, pivotInfo[0]);
+
+            for (int i = k + 1; i < N; i++) {
+                double factor = this.m[i][k] / this.m[k][k];
+                agregada.m[i][0] -= factor * agregada.m[k][0];
+                for (int j = k; j < N; j++) {
+                    //combinaLinhas(i, j, -factor);
+                    this.m[i][j] -= factor * this.m[k][j];
+                }
+            }
+        }
+        double[] solutions = backSubstitution(agregada);
+        for (double solution: solutions) {
+            System.out.printf("%.1f\n", solution);
+        }
         return 0.0;
+    }
+
+    private double[] backSubstitution(Matriz agregada){
+        int numUnknowns = agregada.lin;
+        double[] solution = new double[numUnknowns];
+        for (int i = numUnknowns - 1; i >= 0; i--) {
+            double sum = 0.0;
+            for (int j = i + 1; j < numUnknowns; j++) {
+                sum += this.m[i][j] * solution[j];
+            }
+            solution[i] = (agregada.m[i][0] - sum) / this.m[i][i];
+        }
+        return solution;
     }
 
     // metodo que implementa a eliminacao de Gauss-Jordan, que coloca a matriz (que chama o metodo)
