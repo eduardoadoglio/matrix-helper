@@ -89,14 +89,14 @@ class Matriz {
         double[] temp = this.m[i1];
         this.m[i1] = this.m[i2];
         this.m[i2] = temp;
-        // TODO: implementar este metodo.
     }
 
     // metodo que multiplica as entradas da linha i pelo escalar k
 
     private void multiplicaLinha(int i, double k){
-
-        // TODO: implementar este metodo.
+        for (int j = 0; j < this.m[i].length; j++) {
+            this.m[i][j] = this.m[i][j] * k;
+        }
     }
 
     // metodo que faz a seguinte combinacao de duas linhas da matriz:
