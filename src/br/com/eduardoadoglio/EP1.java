@@ -22,9 +22,7 @@ public class EP1 {
         }
 
         matrix.imprime();
-
         // TODO: completar este metodo.
-
         if("resolve".equals(operation)){
 
         }

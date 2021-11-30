@@ -86,7 +86,9 @@ class Matriz {
     // metodo que troca as linhas i1 e i2 de lugar.
 
     private void trocaLinha(int i1, int i2){
-
+        double[] temp = this.m[i1];
+        this.m[i1] = this.m[i2];
+        this.m[i2] = temp;
         // TODO: implementar este metodo.
     }
 
