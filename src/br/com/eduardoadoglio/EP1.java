@@ -27,13 +27,23 @@ public class EP1 {
                     }
                 }
             }
-            matrix.formaEscalonada(agg);
+            double[] solution = matrix.solveMatrix(agg);
+            for(double value: solution){
+                System.out.println(value);
+            }
         }
         else if("inverte".equals(operation)){
 
         }
         else if("determinante".equals(operation)){
-
+            Matriz matrix = new Matriz(matrixDimension, matrixDimension);
+            for(int i = 0; i < matrixDimension; i++){
+                for(int j = 0; j < matrixDimension; j++) {
+                    matrix.set(i, j, in.nextDouble());
+                }
+            }
+            double determinant = matrix.formaEscalonada(null);
+            System.out.printf("%.2f", determinant);
         }
         else {
             System.out.println("Operação desconhecida!");

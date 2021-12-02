@@ -1,6 +1,7 @@
 package br.com.eduardoadoglio;
 
-import java.util.*;
+import br.com.eduardoadoglio.exceptions.SingularMatrixException;
+import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
 
 // classe que representa uma matriz de valores do tipo double.
 
@@ -38,7 +39,6 @@ class Matriz {
     }
 
     public double get(int i, int j){
-
         return m[i][j];
     }
 
@@ -138,6 +138,20 @@ class Matriz {
         return new int [] { pivo_lin, pivo_col };
     }
 
+    public double[] solveMatrix(Matriz agregada) {
+        try {
+            this.formaEscalonada(agregada);
+            return this.backSubstitution(agregada);
+        } catch (SingularMatrixException e) {
+            if(agregada.m[e.getZeroRow()][0] == 0) {
+                System.out.println("sistema possui diversas soluções");
+            }else {
+                System.out.println("sistema sem solução");
+            }
+            return new double[] {};
+        }
+    }
+
     // metodo que implementa a eliminacao gaussiana, que coloca a matriz (que chama o metodo)
     // na forma escalonada. As operacoes realizadas para colocar a matriz na forma escalonada
     // tambem devem ser aplicadas na matriz "agregada" caso esta seja nao nula. Este metodo
@@ -148,28 +162,51 @@ class Matriz {
         if(agregada == null){
             agregada = Matriz.identidade(this.lin);
         }
-        int N = agregada.lin;
 
+        double determinant = 1.0;
+        boolean signal = true;
+        
+        int N = agregada.lin;
+        // Loopando por cada linha da matriz, onde k é o numero da linha
         for (int k = 0; k < N; k++) {
+            // Encontramos a linha e coluna do próximo pivô
             int[] pivotInfo = encontraLinhaPivo(k);
+
+            // Se o pivô for 0 ou não encontrado
+            // (nesse caso, assumindo o valor default do numero de linhas),
+            // sabemos que a matriz é singular
+            if(pivotInfo[0] == lin || this.m[k][pivotInfo[1]] == 0){
+                throw new SingularMatrixException("Matriz singular", pivotInfo[0] - 1);
+            }
 
             trocaLinha(k, pivotInfo[0]);
             agregada.trocaLinha(k, pivotInfo[0]);
-
+            signal = !signal;
+            
             for (int i = k + 1; i < N; i++) {
                 double factor = this.m[i][k] / this.m[k][k];
                 agregada.m[i][0] -= factor * agregada.m[k][0];
                 for (int j = k; j < N; j++) {
-                    //combinaLinhas(i, j, -factor);
+                    // combinaLinhas(i, j, factor * -1);
                     this.m[i][j] -= factor * this.m[k][j];
                 }
             }
         }
-        double[] solutions = backSubstitution(agregada);
-        for (double solution: solutions) {
-            System.out.printf("%.1f\n", solution);
+        if(this.lin == 1) {
+            determinant = this.get(0, 0);
+        }else if (this.lin == 2) {
+            determinant = (this.get(0, 0) * this.get(1, 1))
+                    - (this.get(0,1) * this.get(1, 0));
+        }else {
+            for (int i = 0; i < N; i++) {
+                determinant *= this.m[i][i];
+            }
+
+            if(signal) {
+                determinant *= -1;
+            }
         }
-        return 0.0;
+        return determinant;
     }
 
     private double[] backSubstitution(Matriz agregada){
