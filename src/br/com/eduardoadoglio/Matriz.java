@@ -171,27 +171,42 @@ class Matriz {
         for (int k = 0; k < N; k++) {
             // Encontramos a linha e coluna do próximo pivô
             int[] pivotInfo = encontraLinhaPivo(k);
+            int pivotRow = pivotInfo[0];
+            int pivotCol = pivotInfo[1];
 
             // Se o pivô for 0 ou não encontrado
             // (nesse caso, assumindo o valor default do numero de linhas),
             // sabemos que a matriz é singular
-            if(pivotInfo[0] == lin || this.m[k][pivotInfo[1]] == 0){
-                throw new SingularMatrixException("Matriz singular", pivotInfo[0] - 1);
+            if(pivotRow == this.lin || this.m[pivotRow][pivotCol] == 0){
+                 throw new SingularMatrixException("Matriz singular", pivotInfo[0] - 1);
             }
 
-            trocaLinha(k, pivotInfo[0]);
-            agregada.trocaLinha(k, pivotInfo[0]);
-            signal = !signal;
-            
+            // Se a linha do pivô for diferente da linha atual, trocar as duas linhas
+            // e inverter o sinal da determinante
+            if(pivotRow != k) {
+                trocaLinha(k, pivotRow);
+                agregada.trocaLinha(k, pivotRow);
+                signal = !signal;
+            }
+
+
+            // Fazendo todos os elementos abaixo do pivô ser zero
+            // i sendo a linha do elemento a ser zerado
             for (int i = k + 1; i < N; i++) {
+                // Procuramos um número que, ao ser multiplicado pelo elemento k, k e
+                // subtraindo o resultado disso ao elemento i, k, obtemos zero
                 double factor = this.m[i][k] / this.m[k][k];
-                agregada.m[i][0] -= factor * agregada.m[k][0];
+                // Multiplicamos esse número por todos os elementos da linha k e subtraímos esse resultado
+                // de todos os elementos da linha i, tanto da matriz original quanto da agregada
+                for (int j = 0; j < agregada.col; j++) {
+                    agregada.m[i][j] -= factor * agregada.m[k][j];
+                }
                 for (int j = k; j < N; j++) {
-                    // combinaLinhas(i, j, factor * -1);
                     this.m[i][j] -= factor * this.m[k][j];
                 }
             }
         }
+
         if(this.lin == 1) {
             determinant = this.get(0, 0);
         }else if (this.lin == 2) {
@@ -229,7 +244,50 @@ class Matriz {
     // matriz ja esteja na forma escalonada (mas voce pode usar o metodo acima para isso).
 
     public void formaEscalonadaReduzida(Matriz agregada){
+        if(agregada == null){
+            agregada = Matriz.identidade(this.lin);
+        }
+        // Garantir que a matriz está na forma escalonada
+        formaEscalonada(agregada);
+        double ratio;
+        for (int i = 0; i < this.lin; i++) {
+            if(Math.abs(this.m[i][i]) <= SMALL) {
+                throw new SingularMatrixException("matriz singular");
+            }
+            for (int j = 0; j < this.lin; j++) {
+                if(i != j) {
+                    ratio = this.m[j][i]/this.m[i][i];
+                    for (int k = 0; k < this.lin; k++) {
+                        this.m[j][k] -= ratio * this.m[i][k];
+                        agregada.m[j][k] -= ratio * agregada.m[i][k];
+                    }
+                }
+            }
+        }
+    }
 
-        // TODO: implementar este metodo.
+    private void realizaPivo(int i, int j) {
+        for (int k = 0; k < lin; k++) {
+            double alpha = this.m[k][j] / this.m[i][j];
+            for (int l = 0; l < lin; l++) {
+                if(k != i && l != j) {
+                    this.m[k][l] -= alpha * this.m[i][l];
+                }
+            }
+        }
+
+        for (int k = 0; k < lin; k++) {
+            if(k != i) {
+                this.m[k][j] = 0.0;
+            }
+        }
+
+        for (int k = 0; k < lin; k++) {
+            if(k != j) {
+                this.m[i][k] /= this.m[i][j];
+            }
+        }
+
+        this.m[i][j] = 0.0;
     }
 }

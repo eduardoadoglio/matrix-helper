@@ -9,12 +9,8 @@ public class EP1 {
     public static void main(String [] args){
 
         Scanner in = new Scanner(System.in);	// Scanner para facilitar a leitura de dados a partir da entrada padrao.
-        System.out.println("Qual operação será realizada?");
-        System.out.println("| resolve | inverte | determinante |");
         String operation = in.next();		// le, usando o scanner, a string que determina qual operacao deve ser realizada.
-        System.out.println("Qual é a dimensão da matriz?");
         int matrixDimension = in.nextInt();			// lê a dimensão da matriz a ser manipulada pela operacao escolhida.
-        System.out.println("Insira os elementos da matriz:");
         if("resolve".equals(operation)){
             Matriz matrix = new Matriz(matrixDimension, matrixDimension);
             Matriz agg = new Matriz(matrixDimension, 1);
@@ -29,11 +25,19 @@ public class EP1 {
             }
             double[] solution = matrix.solveMatrix(agg);
             for(double value: solution){
-                System.out.println(value);
+                System.out.printf("%.2f\n", value);
             }
         }
         else if("inverte".equals(operation)){
-
+            Matriz matrix = new Matriz(matrixDimension, matrixDimension);
+            for(int i = 0; i < matrixDimension; i++){
+                for(int j = 0; j < matrixDimension; j++) {
+                    matrix.set(i, j, in.nextDouble());
+                }
+            }
+            Matriz identidade = Matriz.identidade(matrixDimension);
+            matrix.formaEscalonadaReduzida(identidade);
+            matrix.imprime(identidade);
         }
         else if("determinante".equals(operation)){
             Matriz matrix = new Matriz(matrixDimension, matrixDimension);
