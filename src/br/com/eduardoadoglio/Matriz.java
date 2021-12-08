@@ -139,17 +139,30 @@ class Matriz {
     }
 
     public double[] solveMatrix(Matriz agregada) {
-        try {
-            this.formaEscalonada(agregada);
-            return this.backSubstitution(agregada);
-        } catch (SingularMatrixException e) {
-            if(agregada.m[e.getZeroRow()][0] == 0) {
+        double determinante = this.formaEscalonada(agregada);
+        if(determinante == 0) {
+            int zeroRow = this.getZeroRow();
+            if(agregada.m[zeroRow][0] == 0) {
                 System.out.println("sistema possui diversas soluções");
             }else {
                 System.out.println("sistema sem solução");
             }
             return new double[] {};
+        } else {
+            return this.backSubstitution(agregada);
         }
+    }
+
+    private int getZeroRow() {
+        for (int i = 0; i < this.lin; i++) {
+            int[] pivotInfo = encontraLinhaPivo(i);
+            int pivotRow = pivotInfo[0];
+            int pivotCol = pivotInfo[1];
+            if(pivotRow == this.lin || this.m[pivotRow][pivotCol] == 0){
+                return i;
+            }
+        }
+        return -1;
     }
 
     // metodo que implementa a eliminacao gaussiana, que coloca a matriz (que chama o metodo)
@@ -178,7 +191,9 @@ class Matriz {
             // (nesse caso, assumindo o valor default do numero de linhas),
             // sabemos que a matriz é singular
             if(pivotRow == this.lin || this.m[pivotRow][pivotCol] == 0){
-                 throw new SingularMatrixException("Matriz singular", pivotInfo[0] - 1);
+                // O determinante de uma matriz singular é zero
+                return 0;
+                // throw new SingularMatrixException("Matriz singular", pivotInfo[0] - 1);
             }
 
             // Se a linha do pivô for diferente da linha atual, trocar as duas linhas
@@ -248,7 +263,11 @@ class Matriz {
             agregada = Matriz.identidade(this.lin);
         }
         // Garantir que a matriz está na forma escalonada
-        formaEscalonada(agregada);
+        double determinante = formaEscalonada(agregada);
+
+        if(determinante == 0) {
+            throw new SingularMatrixException("matriz singular");
+        }
 
         for (int i = this.lin - 1; i > 0 ; i--) {
             if(this.m[i - 1][0] < this.m[i][0]) {
