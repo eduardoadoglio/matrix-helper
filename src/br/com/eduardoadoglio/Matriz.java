@@ -249,45 +249,36 @@ class Matriz {
         }
         // Garantir que a matriz está na forma escalonada
         formaEscalonada(agregada);
-        double ratio;
-        for (int i = 0; i < this.lin; i++) {
-            if(Math.abs(this.m[i][i]) <= SMALL) {
-                throw new SingularMatrixException("matriz singular");
+
+        for (int i = this.lin - 1; i > 0 ; i--) {
+            if(this.m[i - 1][0] < this.m[i][0]) {
+                trocaLinha(i - 1, i);
+                agregada.trocaLinha(i - 1, i);
             }
+        }
+
+        for (int i = 0; i < this.lin; i++) {
             for (int j = 0; j < this.lin; j++) {
                 if(i != j) {
-                    ratio = this.m[j][i]/this.m[i][i];
+                    double temp = this.m[j][i] / this.m[i][i];
                     for (int k = 0; k < this.lin; k++) {
-                        this.m[j][k] -= ratio * this.m[i][k];
-                        agregada.m[j][k] -= ratio * agregada.m[i][k];
+                        this.m[j][k] -= this.m[i][k] * temp;
+                        agregada.m[j][k] -= agregada.m[i][k] * temp;
                     }
                 }
             }
         }
+
+        for (int i = 0; i < this.lin; i++) {
+            double temp = this.m[i][i];
+            double tempAgregada = agregada.m[i][i];
+            for (int j = 0; j < this.lin; j++) {
+                this.m[i][j] = this.m[i][j] / temp;
+                agregada.m[i][j] = agregada.m[i][j] / temp;
+            }
+        }
+
+
     }
 
-    private void realizaPivo(int i, int j) {
-        for (int k = 0; k < lin; k++) {
-            double alpha = this.m[k][j] / this.m[i][j];
-            for (int l = 0; l < lin; l++) {
-                if(k != i && l != j) {
-                    this.m[k][l] -= alpha * this.m[i][l];
-                }
-            }
-        }
-
-        for (int k = 0; k < lin; k++) {
-            if(k != i) {
-                this.m[k][j] = 0.0;
-            }
-        }
-
-        for (int k = 0; k < lin; k++) {
-            if(k != j) {
-                this.m[i][k] /= this.m[i][j];
-            }
-        }
-
-        this.m[i][j] = 0.0;
-    }
 }

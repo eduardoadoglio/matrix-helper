@@ -1,5 +1,7 @@
 package br.com.eduardoadoglio;
 
+import br.com.eduardoadoglio.exceptions.SingularMatrixException;
+
 import java.util.Scanner;
 
 public class EP1 {
@@ -36,8 +38,12 @@ public class EP1 {
                 }
             }
             Matriz identidade = Matriz.identidade(matrixDimension);
-            matrix.formaEscalonadaReduzida(identidade);
-            matrix.imprime(identidade);
+            try {
+                matrix.formaEscalonadaReduzida(identidade);
+                identidade.imprime();
+            } catch(SingularMatrixException e) {
+                System.out.println("matriz singular");
+            }
         }
         else if("determinante".equals(operation)){
             Matriz matrix = new Matriz(matrixDimension, matrixDimension);
