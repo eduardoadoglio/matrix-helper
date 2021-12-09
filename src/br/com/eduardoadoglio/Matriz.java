@@ -1,7 +1,9 @@
 package br.com.eduardoadoglio;
 
 import br.com.eduardoadoglio.exceptions.SingularMatrixException;
-import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 // classe que representa uma matriz de valores do tipo double.
 
@@ -67,7 +69,7 @@ class Matriz {
         for(int i = 0; i < lin; i++){
 
             for(int j = 0; j < col; j++){
-
+                
                 System.out.printf("%7.2f ", m[i][j]);
             }
 
@@ -276,17 +278,20 @@ class Matriz {
                 }
             }
         }
-
         for (int i = 0; i < this.lin; i++) {
             double temp = this.m[i][i];
-            double tempAgregada = agregada.m[i][i];
             for (int j = 0; j < this.lin; j++) {
-                this.m[i][j] = this.m[i][j] / temp;
-                agregada.m[i][j] = agregada.m[i][j] / temp;
+                this.m[i][j] = this.round(this.m[i][j] / temp, 7);
+                agregada.m[i][j] = this.round(agregada.m[i][j] / temp, 7);;
             }
         }
 
+    }
 
+    private double round(double value, int places) {
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 }
