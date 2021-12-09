@@ -37,10 +37,12 @@ class Matriz {
     }
 
     public void set(int i, int j, double valor){
+
         m[i][j] = valor;
     }
 
     public double get(int i, int j){
+
         return m[i][j];
     }
 
@@ -69,7 +71,7 @@ class Matriz {
         for(int i = 0; i < lin; i++){
 
             for(int j = 0; j < col; j++){
-                
+
                 System.out.printf("%7.2f ", m[i][j]);
             }
 
