@@ -177,7 +177,7 @@ class Matriz {
         }
 
         double determinant = 1.0;
-        boolean signal = true;
+        double sign = 1.0;
         
         int N = agregada.lin;
         // Loopando por cada linha da matriz, onde k é o numero da linha
@@ -201,7 +201,7 @@ class Matriz {
             if(pivotRow != k) {
                 trocaLinha(k, pivotRow);
                 agregada.trocaLinha(k, pivotRow);
-                signal = !signal;
+                sign *= -1;
             }
 
 
@@ -231,10 +231,7 @@ class Matriz {
             for (int i = 0; i < N; i++) {
                 determinant *= this.m[i][i];
             }
-
-            if(signal) {
-                determinant *= -1;
-            }
+            determinant *= sign;
         }
         return determinant;
     }
