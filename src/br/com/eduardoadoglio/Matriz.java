@@ -221,18 +221,10 @@ class Matriz {
                 }
             }
         }
-
-        if(this.lin == 1) {
-            determinant = this.get(0, 0);
-        }else if (this.lin == 2) {
-            determinant = (this.get(0, 0) * this.get(1, 1))
-                    - (this.get(0,1) * this.get(1, 0));
-        }else {
-            for (int i = 0; i < N; i++) {
-                determinant *= this.m[i][i];
-            }
-            determinant *= sign;
+        for (int i = 0; i < N; i++) {
+            determinant *= this.m[i][i];
         }
+        determinant *= sign;
         return determinant;
     }
 
