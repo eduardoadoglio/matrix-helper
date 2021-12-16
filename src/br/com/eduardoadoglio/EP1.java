@@ -5,6 +5,10 @@ import br.com.eduardoadoglio.exceptions.SingularMatrixException;
 import java.util.Locale;
 import java.util.Scanner;
 
+// Nome                     N°USP
+// Eduardo Ribeiro Adoglio  11271077
+// Luísa Dipierri Landert   8010698
+
 public class EP1 {
 
     // metodo principal.
